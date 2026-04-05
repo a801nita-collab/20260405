@@ -1,7 +1,7 @@
 let cellSize = 80;
 let targetCol, targetRow;
 let level = 1;
-let gameState = "playing"; // 狀態：playing, result (通關), gameOver (失敗)
+let gameState = "start";   // 狀態：start, playing, result (通關), gameOver (失敗)
 let shakeAmount = 0;       // 震動強度
 let failFlash = 0;         // 錯誤閃爍亮度
 let lives = 3;             // 剩餘鏟子數量
@@ -39,6 +39,11 @@ function draw() {
   if (flashR > 0) flashR -= 2; // 顏色閃光緩慢褪去
   if (flashG > 0) flashG -= 2;
   if (flashB > 0) flashB -= 2;
+
+  if (gameState === "start") {
+    drawStartScreen();
+    return;
+  }
 
   // 如果在通關畫面狀態
   if (gameState === "result") {
@@ -126,6 +131,21 @@ function draw() {
   text("關卡: " + level + " / 3", width - 20, 20);
 }
 
+function drawStartScreen() {
+  fill(255);
+  textAlign(CENTER, CENTER);
+  
+  textSize(48);
+  text("探測幸運色塊", width / 2, height / 2 - 60);
+  
+  textSize(24);
+  text("滑鼠滑過格子可進行感應", width / 2, height / 2);
+  fill(255, 255, 0);
+  text("【注意】需按「滑鼠右鍵」才能挖掘格子", width / 2, height / 2 + 40);
+  fill(255);
+  text("點擊畫面開始遊戲", width / 2, height / 2 + 100);
+}
+
 function drawResultScreen() {
   fill(255);
   textAlign(CENTER, CENTER);
@@ -156,7 +176,9 @@ function drawGameOverScreen() {
 function keyPressed() { } // 移除原本的鍵盤偵測
 
 function mousePressed() {
-  if (gameState === "result" || gameState === "gameOver") {
+  if (gameState === "start") {
+    gameState = "playing";
+  } else if (gameState === "result" || gameState === "gameOver") {
     // 結算或失敗畫面時，點擊左鍵處理
     if (gameState === "gameOver") {
       resetGame();
